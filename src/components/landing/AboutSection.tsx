@@ -40,13 +40,13 @@ export const AboutSection = () => {
           className="text-center max-w-3xl mx-auto mb-16"
         >
           <span className="text-primary font-semibold text-sm uppercase tracking-wider">
-            About TrustAnalyzer
+            About SenseAI
           </span>
           <h2 className="mt-4 text-3xl sm:text-4xl font-bold">
             Your Personal Web Security Guard
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            TrustAnalyzer is a comprehensive web security tool that analyzes websites 
+            SenseAI is a comprehensive web security tool that analyzes websites 
             in real-time, giving you the confidence to browse safely and protect your 
             personal data.
           </p>

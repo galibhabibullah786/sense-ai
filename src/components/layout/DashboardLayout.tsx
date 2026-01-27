@@ -66,7 +66,7 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 animate={{ opacity: 1 }}
                 className="text-lg font-bold truncate"
               >
-                TrustAnalyzer
+                SenseAI
               </motion.span>
             )}
           </Link>

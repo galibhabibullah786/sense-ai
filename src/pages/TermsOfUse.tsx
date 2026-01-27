@@ -10,7 +10,7 @@ const TermsOfUse = () => (
         <div className="prose prose-lg dark:prose-invert">
           <p className="text-muted-foreground">Last updated: January 2026</p>
           <h2 className="text-2xl font-semibold mt-8 mb-4">1. General Terms</h2>
-          <p className="text-muted-foreground mb-4">These terms govern your use of TrustAnalyzer and all related services.</p>
+          <p className="text-muted-foreground mb-4">These terms govern your use of SenseAI and all related services.</p>
           <h2 className="text-2xl font-semibold mt-8 mb-4">2. Permitted Use</h2>
           <p className="text-muted-foreground mb-4">You may use our service for personal, non-commercial security analysis purposes.</p>
           <h2 className="text-2xl font-semibold mt-8 mb-4">3. Restrictions</h2>

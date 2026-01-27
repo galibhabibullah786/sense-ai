@@ -32,7 +32,7 @@ export const Footer = () => {
               <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
                 <Shield className="h-5 w-5 text-primary-foreground" />
               </div>
-              <span className="text-xl font-bold">TrustAnalyzer</span>
+              <span className="text-xl font-bold">SenseAI</span>
             </Link>
             <p className="text-muted-foreground max-w-xs mb-6">
               Real-time website trust analysis powered by AI. Browse the web with confidence.
@@ -113,7 +113,7 @@ export const Footer = () => {
 
         <div className="mt-12 pt-8 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} TrustAnalyzer. All rights reserved.
+            © {new Date().getFullYear()} SenseAI. All rights reserved.
           </p>
           <p className="text-sm text-muted-foreground">
             Made with ❤️ for a safer web

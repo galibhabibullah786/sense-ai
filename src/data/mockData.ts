@@ -204,7 +204,7 @@ export const reviews = [
     company: "TechCorp",
     avatar: "SC",
     rating: 5,
-    text: "TrustAnalyzer has become an essential part of my daily workflow. It catches suspicious sites that I might have missed, and the detailed explanations help me understand exactly what's happening.",
+    text: "SenseAI has become an essential part of my daily workflow. It catches suspicious sites that I might have missed, and the detailed explanations help me understand exactly what's happening.",
   },
   {
     id: 2,
@@ -222,7 +222,7 @@ export const reviews = [
     company: "GlobalRetail Inc",
     avatar: "ER",
     rating: 5,
-    text: "We deployed TrustAnalyzer across our organization and saw phishing incidents drop by 60%. The real-time analysis gives our team confidence when browsing vendor sites.",
+    text: "We deployed SenseAI across our organization and saw phishing incidents drop by 60%. The real-time analysis gives our team confidence when browsing vendor sites.",
   },
   {
     id: 4,
@@ -240,6 +240,6 @@ export const reviews = [
     company: "SecureNet Solutions",
     avatar: "AF",
     rating: 5,
-    text: "I recommend TrustAnalyzer to all my clients. It's like having a security expert reviewing every website you visit in real-time.",
+    text: "I recommend SenseAI to all my clients. It's like having a security expert reviewing every website you visit in real-time.",
   },
 ];

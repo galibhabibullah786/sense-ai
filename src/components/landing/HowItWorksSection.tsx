@@ -7,14 +7,14 @@ const steps = [
     icon: Download,
     title: "Install the Extension",
     description:
-      "Add TrustAnalyzer to your browser with one click. Available for Chrome, Firefox, and Edge.",
+      "Add SenseAI to your browser with one click. Available for Chrome, Firefox, and Edge.",
   },
   {
     number: "02",
     icon: MousePointer,
     title: "Browse Normally",
     description:
-      "Continue browsing the web as you always do. TrustAnalyzer works silently in the background.",
+      "Continue browsing the web as you always do. SenseAI works silently in the background.",
   },
   {
     number: "03",

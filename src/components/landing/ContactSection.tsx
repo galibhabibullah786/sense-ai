@@ -75,10 +75,10 @@ export const ContactSection = () => {
                 <div>
                   <p className="font-medium">Email</p>
                   <a
-                    href="mailto:support@trustanalyzer.com"
+                    href="mailto:support@SenseAI.com"
                     className="text-muted-foreground hover:text-primary transition-colors"
                   >
-                    support@trustanalyzer.com
+                    support@SenseAI.com
                   </a>
                 </div>
               </div>

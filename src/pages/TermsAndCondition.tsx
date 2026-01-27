@@ -10,7 +10,7 @@ const TermsAndCondition = () => (
         <div className="prose prose-lg dark:prose-invert">
           <p className="text-muted-foreground">Last updated: January 2026</p>
           <h2 className="text-2xl font-semibold mt-8 mb-4">1. Acceptance of Terms</h2>
-          <p className="text-muted-foreground mb-4">By accessing and using TrustAnalyzer, you accept and agree to be bound by these terms.</p>
+          <p className="text-muted-foreground mb-4">By accessing and using SenseAI, you accept and agree to be bound by these terms.</p>
           <h2 className="text-2xl font-semibold mt-8 mb-4">2. Use of Service</h2>
           <p className="text-muted-foreground mb-4">You agree to use our service only for lawful purposes and in accordance with these terms.</p>
           <h2 className="text-2xl font-semibold mt-8 mb-4">3. Account Responsibilities</h2>

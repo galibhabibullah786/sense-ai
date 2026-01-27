@@ -58,7 +58,7 @@ export const ReviewsSection = () => {
             Trusted by Security Professionals
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            See what our users say about their experience with TrustAnalyzer.
+            See what our users say about their experience with SenseAI.
           </p>
         </motion.div>
 
