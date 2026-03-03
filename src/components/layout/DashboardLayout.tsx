@@ -56,7 +56,7 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       >
         {/* Logo */}
         <div className="h-16 flex items-center px-4 border-b border-border">
-          <Link to="/dashboard" className="flex items-center gap-3">
+          <Link to="/" className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary shrink-0">
               <Shield className="h-5 w-5 text-primary-foreground" />
             </div>
@@ -161,11 +161,10 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           </div>
           <div className="flex items-center gap-4">
             <div className="text-right">
-              <p className="text-sm font-medium">{user?.name}</p>
-              <p className="text-xs text-muted-foreground">{user?.email}</p>
+              <p className="text-sm font-medium">{user?.username}</p>
             </div>
             <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold">
-              {user?.name?.charAt(0).toUpperCase() || "U"}
+              {user?.username?.charAt(0).toUpperCase() || "U"}
             </div>
           </div>
         </header>

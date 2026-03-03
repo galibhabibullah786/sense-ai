@@ -6,6 +6,7 @@ import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { TrustScoreBadge } from "@/components/shared/TrustScoreBadge";
 import { VerdictBadge } from "@/components/shared/VerdictBadge";
 import { EmptyState } from "@/components/shared/EmptyState";
+import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,7 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { mockSessions, Session } from "@/data/mockData";
+import { useSessions } from "@/hooks/useApi";
 import { formatDistanceToNow } from "date-fns";
 
 const Sessions = () => {
@@ -24,22 +25,15 @@ const Sessions = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const perPage = 6;
 
-  // Filter sessions
-  const filteredSessions = mockSessions.filter((session) => {
-    const matchesSearch =
-      session.domain.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      session.url.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesVerdict =
-      verdictFilter === "all" || session.verdict === verdictFilter;
-    return matchesSearch && matchesVerdict;
+  const { data, isLoading } = useSessions({
+    page: currentPage,
+    perPage,
+    verdict: verdictFilter === "all" ? undefined : verdictFilter,
+    domain: searchQuery || undefined,
   });
 
-  // Paginate
-  const totalPages = Math.ceil(filteredSessions.length / perPage);
-  const paginatedSessions = filteredSessions.slice(
-    (currentPage - 1) * perPage,
-    currentPage * perPage
-  );
+  const sessions = data?.sessions ?? [];
+  const totalPages = data?.totalPages ?? 1;
 
   return (
     <DashboardLayout>
@@ -96,7 +90,9 @@ const Sessions = () => {
         </motion.div>
 
         {/* Sessions list */}
-        {paginatedSessions.length === 0 ? (
+        {isLoading ? (
+          <div className="flex items-center justify-center h-64"><LoadingSpinner /></div>
+        ) : sessions.length === 0 ? (
           <EmptyState
             title="No sessions found"
             description="Try adjusting your search or filter criteria"
@@ -104,7 +100,7 @@ const Sessions = () => {
           />
         ) : (
           <div className="space-y-4">
-            {paginatedSessions.map((session, index) => (
+            {sessions.map((session, index) => (
               <motion.div
                 key={session.id}
                 initial={{ opacity: 0, y: 20 }}
@@ -134,15 +130,12 @@ const Sessions = () => {
                     <div className="flex items-center gap-4 shrink-0">
                       <div className="text-right hidden md:block">
                         <p className="text-sm text-muted-foreground">
-                          {formatDistanceToNow(new Date(session.analyzedAt), {
+                          {formatDistanceToNow(new Date(session.created_at), {
                             addSuffix: true,
                           })}
                         </p>
-                        <p className="text-sm text-muted-foreground">
-                          {session.signalsCount} signals analyzed
-                        </p>
                       </div>
-                      <TrustScoreBadge score={session.trustScore} size="md" />
+                      <TrustScoreBadge score={session.trust_score} size="md" />
                       <VerdictBadge verdict={session.verdict} size="md" />
                     </div>
                   </div>
@@ -162,8 +155,8 @@ const Sessions = () => {
           >
             <p className="text-sm text-muted-foreground">
               Showing {(currentPage - 1) * perPage + 1} to{" "}
-              {Math.min(currentPage * perPage, filteredSessions.length)} of{" "}
-              {filteredSessions.length} sessions
+              {Math.min(currentPage * perPage, data?.total ?? 0)} of{" "}
+              {data?.total ?? 0} sessions
             </p>
             <div className="flex items-center gap-2">
               <Button

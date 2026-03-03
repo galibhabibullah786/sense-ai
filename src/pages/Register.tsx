@@ -1,21 +1,20 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Shield, Mail, Lock, Eye, EyeOff, User, ArrowRight, Check, X } from "lucide-react";
+import { Shield, Lock, Eye, EyeOff, User, ArrowRight, Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useAuth } from "@/contexts/AuthContext";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 const registerSchema = z
   .object({
-    name: z.string().min(2, "Name must be at least 2 characters"),
-    email: z.string().email("Please enter a valid email address"),
+    username: z.string().min(3, "Username must be at least 3 characters").max(32, "Username must be at most 32 characters").regex(/^[a-zA-Z0-9_]+$/, "Username can only contain letters, numbers, and underscores"),
     password: z.string().min(8, "Password must be at least 8 characters"),
     confirmPassword: z.string(),
     terms: z.boolean().refine((val) => val === true, {
@@ -41,11 +40,11 @@ const Register = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
   const { register: authRegister } = useAuth();
-  const { toast } = useToast();
 
   const {
     register,
     handleSubmit,
+    control,
     watch,
     formState: { errors, isSubmitting },
   } = useForm<RegisterFormData>({
@@ -57,19 +56,15 @@ const Register = () => {
 
   const onSubmit = async (data: RegisterFormData) => {
     const result = await authRegister({
-      name: data.name,
-      email: data.email,
+      username: data.username,
       password: data.password,
     });
     if (result.error) {
-      toast({
-        variant: "destructive",
-        title: "Registration failed",
+      toast.error("Registration failed", {
         description: result.error,
       });
     } else {
-      toast({
-        title: "Account created!",
+      toast.success("Account created!", {
         description: "Welcome to SenseAI.",
       });
       navigate("/dashboard");
@@ -95,7 +90,7 @@ const Register = () => {
           <h1 className="text-4xl font-bold text-white mb-4">
             Join SenseAI
           </h1>
-          <p className="text-lg text-gray-300">
+          <p className="text-lg text-white/70">
             Create your account and start browsing the web with confidence. Protect your data with AI-powered security analysis.
           </p>
         </motion.div>
@@ -127,33 +122,17 @@ const Register = () => {
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
               <div>
-                <label className="block text-sm font-medium mb-2">Full Name</label>
+                <label className="block text-sm font-medium mb-2">Username</label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                   <Input
-                    {...register("name")}
-                    placeholder="John Doe"
+                    {...register("username")}
+                    placeholder="choose_a_username"
                     className="pl-10 h-12"
                   />
                 </div>
-                {errors.name && (
-                  <p className="text-sm text-destructive mt-1">{errors.name.message}</p>
-                )}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">Email</label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                  <Input
-                    {...register("email")}
-                    type="email"
-                    placeholder="you@example.com"
-                    className="pl-10 h-12"
-                  />
-                </div>
-                {errors.email && (
-                  <p className="text-sm text-destructive mt-1">{errors.email.message}</p>
+                {errors.username && (
+                  <p className="text-sm text-destructive mt-1">{errors.username.message}</p>
                 )}
               </div>
 
@@ -229,7 +208,18 @@ const Register = () => {
               </div>
 
               <div className="flex items-start gap-2">
-                <Checkbox id="terms" {...register("terms")} className="mt-1" />
+                <Controller
+                  name="terms"
+                  control={control}
+                  render={({ field }) => (
+                    <Checkbox
+                      id="terms"
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                      className="mt-1"
+                    />
+                  )}
+                />
                 <label htmlFor="terms" className="text-sm cursor-pointer leading-relaxed">
                   I agree to the{" "}
                   <Link to="/terms-and-condition" className="text-primary hover:underline">

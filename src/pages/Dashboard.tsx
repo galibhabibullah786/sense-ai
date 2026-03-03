@@ -6,14 +6,22 @@ import { StatCard } from "@/components/shared/StatCard";
 import { TrustScoreGauge } from "@/components/shared/TrustScoreGauge";
 import { TrustScoreBadge } from "@/components/shared/TrustScoreBadge";
 import { VerdictBadge } from "@/components/shared/VerdictBadge";
-import { mockDashboardData } from "@/data/mockData";
+import { useDashboard } from "@/hooks/useApi";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
+import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
 import { formatDistanceToNow } from "date-fns";
 
 const Dashboard = () => {
   const { user } = useAuth();
-  const { stats, recentSessions } = mockDashboardData;
+  const { data, isLoading, error } = useDashboard();
+
+  if (isLoading) {
+    return <DashboardLayout><div className="flex items-center justify-center h-64"><LoadingSpinner /></div></DashboardLayout>;
+  }
+
+  const stats = data?.stats ?? { totalSessions: 0, averageScore: 0, domainsAnalyzed: 0, alertsCount: 0 };
+  const recentSessions = data?.recentSessions ?? [];
 
   return (
     <DashboardLayout>
@@ -25,7 +33,7 @@ const Dashboard = () => {
           transition={{ duration: 0.5 }}
         >
           <h1 className="text-3xl font-bold">
-            Welcome back, {user?.name?.split(" ")[0] || "User"}!
+            Welcome back, {user?.username || "User"}!
           </h1>
           <p className="text-muted-foreground mt-1">
             Here's an overview of your browsing security
@@ -118,10 +126,10 @@ const Dashboard = () => {
                       </div>
 
                       <div className="flex items-center gap-3 shrink-0">
-                        <TrustScoreBadge score={session.trustScore} size="sm" />
+                        <TrustScoreBadge score={session.trust_score} size="sm" />
                         <VerdictBadge verdict={session.verdict} size="sm" />
                         <span className="text-sm text-muted-foreground hidden sm:block">
-                          {formatDistanceToNow(new Date(session.analyzedAt), {
+                          {formatDistanceToNow(new Date(session.created_at), {
                             addSuffix: true,
                           })}
                         </span>

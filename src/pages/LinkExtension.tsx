@@ -1,18 +1,24 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Link2, Copy, Check, RefreshCw } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
+import { useGenerateLinkCode } from "@/hooks/useApi";
 
 const LinkExtension = () => {
-  const [code] = useState("TRUST-" + Math.random().toString(36).substring(2, 8).toUpperCase());
   const [copied, setCopied] = useState(false);
-  const { toast } = useToast();
+  const generateCode = useGenerateLinkCode();
+
+  useEffect(() => {
+    generateCode.mutate();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const code = generateCode.data?.linkCode ?? "------";
 
   const copyCode = () => {
     navigator.clipboard.writeText(code);
     setCopied(true);
-    toast({ title: "Code copied!", description: "Paste this in your browser extension" });
+    toast.success("Code copied!", { description: "Paste this in your browser extension" });
     setTimeout(() => setCopied(false), 2000);
   };
 
@@ -28,8 +34,10 @@ const LinkExtension = () => {
             <p className="text-3xl font-mono font-bold tracking-widest">{code}</p>
           </div>
           <div className="flex gap-3 justify-center">
-            <Button onClick={copyCode}>{copied ? <Check className="h-4 w-4 mr-2" /> : <Copy className="h-4 w-4 mr-2" />}{copied ? "Copied!" : "Copy Code"}</Button>
-            <Button variant="outline"><RefreshCw className="h-4 w-4 mr-2" />New Code</Button>
+            <Button onClick={copyCode} disabled={!generateCode.data}>{copied ? <Check className="h-4 w-4 mr-2" /> : <Copy className="h-4 w-4 mr-2" />}{copied ? "Copied!" : "Copy Code"}</Button>
+            <Button variant="outline" onClick={() => generateCode.mutate()} disabled={generateCode.isPending}>
+              <RefreshCw className={`h-4 w-4 mr-2 ${generateCode.isPending ? "animate-spin" : ""}`} />New Code
+            </Button>
           </div>
           <p className="text-sm text-muted-foreground mt-6">Code expires in 5 minutes</p>
         </div>

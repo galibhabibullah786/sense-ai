@@ -7,7 +7,7 @@ export const HeroSection = () => {
   return (
     <section
       id="hero"
-      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-hero"
+      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-hero pb-5"
     >
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden">
@@ -68,7 +68,7 @@ export const HeroSection = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-lg sm:text-xl text-gray-300 max-w-2xl mx-auto mb-10"
+            className="text-lg sm:text-xl text-white/70 max-w-2xl mx-auto mb-10"
           >
             Real-time website trust analysis powered by AI. Analyze cookies, trackers, 
             fingerprinting, and security headers before you share your data.
@@ -102,7 +102,7 @@ export const HeroSection = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.5 }}
-            className="mt-16 flex flex-col sm:flex-row items-center justify-center gap-8 text-sm text-gray-400"
+            className="mt-16 flex flex-col sm:flex-row items-center justify-center gap-8 text-sm text-white/50"
           >
             <div className="flex items-center gap-2">
               <Shield className="h-5 w-5 text-trust-safe" />

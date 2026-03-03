@@ -1,8 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 @layer base {
   :root {
@@ -65,6 +66,49 @@
     --sidebar-accent-foreground: 173 80% 30%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 173 80% 40%;
+
+    /* ── Component-level theme tokens ─────────────────────────────── */
+    /* Override these per-component to customize any specific part     */
+
+    /* Dashboard cards */
+    --stat-card-bg: var(--card);
+    --stat-card-border: var(--border);
+    --stat-card-icon: var(--primary);
+
+    /* Trust gauge */
+    --gauge-track: var(--muted);
+    --gauge-text: var(--foreground);
+
+    /* Session list items */
+    --session-item-bg: var(--card);
+    --session-item-hover: var(--muted);
+    --session-item-border: var(--border);
+
+    /* Report cards */
+    --report-card-bg: var(--card);
+    --report-card-border: var(--border);
+    --report-icon-bg: 173 80% 95%;
+
+    /* Settings sections */
+    --settings-section-bg: var(--card);
+    --settings-section-border: var(--border);
+
+    /* Navigation / Sidebar */
+    --nav-item-active-bg: var(--primary);
+    --nav-item-active-fg: var(--primary-foreground);
+    --nav-item-hover-bg: var(--muted);
+
+    /* Header */
+    --header-bg: var(--card);
+    --header-border: var(--border);
+
+    /* Badge components */
+    --badge-safe-bg: var(--trust-safe);
+    --badge-safe-fg: var(--trust-safe-foreground);
+    --badge-warning-bg: var(--trust-warning);
+    --badge-warning-fg: var(--trust-warning-foreground);
+    --badge-danger-bg: var(--trust-danger);
+    --badge-danger-fg: var(--trust-danger-foreground);
   }
 
   .dark {
@@ -125,6 +169,39 @@
     --sidebar-accent-foreground: 173 80% 60%;
     --sidebar-border: 220 20% 18%;
     --sidebar-ring: 173 80% 45%;
+
+    /* ── Component-level theme tokens (dark) ──────────────────────── */
+    --stat-card-bg: var(--card);
+    --stat-card-border: var(--border);
+    --stat-card-icon: var(--primary);
+
+    --gauge-track: var(--muted);
+    --gauge-text: var(--foreground);
+
+    --session-item-bg: var(--card);
+    --session-item-hover: var(--muted);
+    --session-item-border: var(--border);
+
+    --report-card-bg: var(--card);
+    --report-card-border: var(--border);
+    --report-icon-bg: 173 60% 15%;
+
+    --settings-section-bg: var(--card);
+    --settings-section-border: var(--border);
+
+    --nav-item-active-bg: var(--primary);
+    --nav-item-active-fg: var(--primary-foreground);
+    --nav-item-hover-bg: var(--muted);
+
+    --header-bg: var(--card);
+    --header-border: var(--border);
+
+    --badge-safe-bg: var(--trust-safe);
+    --badge-safe-fg: var(--trust-safe-foreground);
+    --badge-warning-bg: var(--trust-warning);
+    --badge-warning-fg: var(--trust-warning-foreground);
+    --badge-danger-bg: var(--trust-danger);
+    --badge-danger-fg: var(--trust-danger-foreground);
   }
 }
 

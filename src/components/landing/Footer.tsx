@@ -6,7 +6,7 @@ const footerLinks = {
     { label: "Features", href: "#about" },
     { label: "How It Works", href: "#how-it-works" },
     { label: "Pricing", href: "#" },
-    { label: "Browser Extension", href: "#" },
+    { label: "Browser Extension", href: "/get-extension" },
   ],
   company: [
     { label: "About Us", href: "#about" },
@@ -65,12 +65,21 @@ export const Footer = () => {
             <ul className="space-y-3">
               {footerLinks.product.map((link) => (
                 <li key={link.label}>
-                  <a
-                    href={link.href}
-                    className="text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    {link.label}
-                  </a>
+                  {link.href.startsWith("/") ? (
+                    <Link
+                      to={link.href}
+                      className="text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      {link.label}
+                    </Link>
+                  ) : (
+                    <a
+                      href={link.href}
+                      className="text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      {link.label}
+                    </a>
+                  )}
                 </li>
               ))}
             </ul>

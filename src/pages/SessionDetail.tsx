@@ -18,72 +18,84 @@ import { TrustScoreGauge } from "@/components/shared/TrustScoreGauge";
 import { VerdictBadge } from "@/components/shared/VerdictBadge";
 import { TrustScoreBadge } from "@/components/shared/TrustScoreBadge";
 import { Button } from "@/components/ui/button";
-import { mockSessionDetail } from "@/data/mockData";
+import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
+import { useSessionDetail } from "@/hooks/useApi";
 import { formatDistanceToNow, format } from "date-fns";
 import { cn } from "@/lib/utils";
 
-const signalIcons = {
-  cookies: Cookie,
-  trackers: Eye,
-  fingerprinting: Fingerprint,
-  headers: Shield,
-  ssl: Lock,
-};
-
 const SessionDetail = () => {
   const { id } = useParams();
-  const session = mockSessionDetail; // In real app, fetch by id
+  const { data: session, isLoading, error } = useSessionDetail(id!);
+
+  if (isLoading) {
+    return <DashboardLayout><div className="flex items-center justify-center h-64"><LoadingSpinner /></div></DashboardLayout>;
+  }
+
+  if (!session || error) {
+    return (
+      <DashboardLayout>
+        <div className="text-center py-16">
+          <p className="text-muted-foreground">Session not found</p>
+          <Button variant="ghost" asChild className="mt-4">
+            <Link to="/sessions">Back to Sessions</Link>
+          </Button>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  const sb = session.signal_breakdown;
 
   const signalCategories = [
     {
       key: "cookies",
       label: "Cookies",
       icon: Cookie,
-      score: session.signals.cookies.score,
+      score: sb?.cookies?.score ?? 100,
       details: [
-        `${session.signals.cookies.count} cookies detected`,
-        `${session.signals.cookies.thirdPartyCount} third-party cookies`,
+        `${sb?.cookies?.count ?? 0} cookies detected`,
+        `${sb?.cookies?.thirdPartyCount ?? 0} third-party cookies`,
       ],
     },
     {
       key: "trackers",
       label: "Trackers",
       icon: Eye,
-      score: session.signals.trackers.score,
+      score: sb?.trackers?.score ?? 100,
       details: [
-        `${session.signals.trackers.detected.length} trackers detected`,
-        session.signals.trackers.detected.join(", "),
+        `${sb?.trackers?.count ?? 0} trackers detected`,
+        sb?.trackers?.detected?.join(", ") || "None",
       ],
     },
     {
       key: "fingerprinting",
       label: "Fingerprinting",
       icon: Fingerprint,
-      score: session.signals.fingerprinting.score,
+      score: sb?.fingerprinting?.score ?? 100,
       details: [
-        `Risk level: ${session.signals.fingerprinting.risk}`,
-        `Techniques: ${session.signals.fingerprinting.techniques.join(", ")}`,
+        `Risk level: ${sb?.fingerprinting?.risk ?? "low"}`,
+        `Techniques: ${sb?.fingerprinting?.techniques?.join(", ") || "None"}`,
       ],
     },
     {
       key: "headers",
       label: "Security Headers",
       icon: Shield,
-      score: session.signals.headers.score,
+      score: sb?.headers?.score ?? 100,
       details: [
-        `${session.signals.headers.present.length} headers present`,
-        `${session.signals.headers.missing.length} headers missing`,
+        `${sb?.headers?.present?.length ?? 0} headers present`,
+        `${sb?.headers?.missing?.length ?? 0} headers missing`,
       ],
     },
     {
       key: "ssl",
       label: "SSL/TLS",
       icon: Lock,
-      score: session.signals.ssl.score,
+      score: sb?.ssl?.score ?? 100,
       details: [
-        `Issuer: ${session.signals.ssl.issuer}`,
-        `Valid: ${session.signals.ssl.valid ? "Yes" : "No"}`,
-      ],
+        `Valid: ${sb?.ssl?.valid ? "Yes" : "No"}`,
+        sb?.ssl?.protocol ? `Protocol: ${sb.ssl.protocol}` : "",
+      ].filter(Boolean),
     },
   ];
 
@@ -120,7 +132,7 @@ const SessionDetail = () => {
                 <h1 className="text-2xl font-bold truncate">{session.domain}</h1>
                 <p className="text-muted-foreground truncate">{session.url}</p>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Analyzed {formatDistanceToNow(new Date(session.analyzedAt), { addSuffix: true })} • {format(new Date(session.analyzedAt), "PPp")}
+                  Analyzed {formatDistanceToNow(new Date(session.created_at), { addSuffix: true })} • {format(new Date(session.created_at), "PPp")}
                 </p>
               </div>
             </div>
@@ -140,7 +152,7 @@ const SessionDetail = () => {
             className="lg:col-span-1"
           >
             <div className="bg-card rounded-xl border border-border p-6 h-full flex flex-col items-center justify-center">
-              <TrustScoreGauge score={session.trustScore} size="lg" label="Overall Trust Score" />
+              <TrustScoreGauge score={session.trust_score} size="lg" label="Overall Trust Score" />
             </div>
           </motion.div>
 
@@ -209,7 +221,7 @@ const SessionDetail = () => {
                 Present Headers
               </h3>
               <div className="space-y-2">
-                {session.signals.headers.present.map((header) => (
+                {(sb?.headers?.present ?? []).map((header) => (
                   <div
                     key={header}
                     className="px-3 py-2 rounded-lg bg-trust-safe/10 text-trust-safe text-sm font-mono"
@@ -217,6 +229,9 @@ const SessionDetail = () => {
                     {header}
                   </div>
                 ))}
+                {(sb?.headers?.present ?? []).length === 0 && (
+                  <p className="text-sm text-muted-foreground">No data available</p>
+                )}
               </div>
             </div>
             <div>
@@ -225,7 +240,7 @@ const SessionDetail = () => {
                 Missing Headers
               </h3>
               <div className="space-y-2">
-                {session.signals.headers.missing.map((header) => (
+                {(sb?.headers?.missing ?? []).map((header) => (
                   <div
                     key={header}
                     className="px-3 py-2 rounded-lg bg-trust-danger/10 text-trust-danger text-sm font-mono"
@@ -233,12 +248,16 @@ const SessionDetail = () => {
                     {header}
                   </div>
                 ))}
+                {(sb?.headers?.missing ?? []).length === 0 && (
+                  <p className="text-sm text-muted-foreground">All headers present</p>
+                )}
               </div>
             </div>
           </div>
         </motion.div>
 
         {/* AI Explanation */}
+        {session.explanation && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -251,15 +270,18 @@ const SessionDetail = () => {
             </div>
             <div>
               <h2 className="text-lg font-semibold">AI Analysis</h2>
+              {session.explanation.generated_at && (
               <p className="text-sm text-muted-foreground">
-                Generated {formatDistanceToNow(new Date(session.explanation.generatedAt!), { addSuffix: true })}
+                Generated {formatDistanceToNow(new Date(session.explanation.generated_at), { addSuffix: true })}
               </p>
+              )}
             </div>
           </div>
           <p className="text-muted-foreground leading-relaxed">
             {session.explanation.text}
           </p>
         </motion.div>
+        )}
       </div>
     </DashboardLayout>
   );

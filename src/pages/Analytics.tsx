@@ -1,12 +1,24 @@
 import { motion } from "framer-motion";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { TrustScoreGauge } from "@/components/shared/TrustScoreGauge";
-import { mockAnalyticsData } from "@/data/mockData";
-import { TrendingUp, BarChart3, Activity } from "lucide-react";
+import { LoadingSpinner } from "@/components/shared/LoadingSpinner";
+import { useAnalytics } from "@/hooks/useApi";
+import { TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from "recharts";
 
 const Analytics = () => {
-  const { trendData, domainComparison, summary } = mockAnalyticsData;
+  const { data, isLoading } = useAnalytics({ period: "30d" });
+
+  if (isLoading) {
+    return <DashboardLayout><div className="flex items-center justify-center h-64"><LoadingSpinner /></div></DashboardLayout>;
+  }
+
+  const trendData = data?.trendData ?? [];
+  const domainComparison = data?.domainComparison ?? [];
+  const summary = data?.summary ?? { averageScore: 0, totalSessions: 0, trend: "stable" as const, trendPercentage: 0 };
+
+  const TrendIcon = summary.trend === "improving" ? TrendingUp : summary.trend === "declining" ? TrendingDown : Minus;
+  const trendColor = summary.trend === "improving" ? "text-trust-safe" : summary.trend === "declining" ? "text-trust-danger" : "text-muted-foreground";
 
   return (
     <DashboardLayout>
@@ -19,9 +31,11 @@ const Analytics = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="bg-card rounded-xl border border-border p-6 flex flex-col items-center">
             <TrustScoreGauge score={summary.averageScore} size="md" label="30-Day Average" />
-            <div className="flex items-center gap-2 mt-4 text-trust-safe">
-              <TrendingUp className="h-4 w-4" />
-              <span className="text-sm font-medium">+{summary.trendPercentage}% improvement</span>
+            <div className={`flex items-center gap-2 mt-4 ${trendColor}`}>
+              <TrendIcon className="h-4 w-4" />
+              <span className="text-sm font-medium">
+                {summary.trend === "improving" ? "+" : summary.trend === "declining" ? "-" : ""}{summary.trendPercentage}% {summary.trend}
+              </span>
             </div>
           </div>
 
@@ -33,7 +47,7 @@ const Analytics = () => {
                 <XAxis dataKey="date" tick={{ fontSize: 12 }} className="text-muted-foreground" />
                 <YAxis domain={[0, 100]} tick={{ fontSize: 12 }} />
                 <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))' }} />
-                <Line type="monotone" dataKey="averageScore" stroke="hsl(173, 80%, 40%)" strokeWidth={2} dot={false} />
+                <Line type="monotone" dataKey="averageScore" stroke="hsl(var(--primary))" strokeWidth={2} dot={false} />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -47,7 +61,7 @@ const Analytics = () => {
               <XAxis type="number" domain={[0, 100]} />
               <YAxis dataKey="domain" type="category" width={120} tick={{ fontSize: 12 }} />
               <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))' }} />
-              <Bar dataKey="averageScore" fill="hsl(173, 80%, 40%)" radius={[0, 4, 4, 0]} />
+              <Bar dataKey="averageScore" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>

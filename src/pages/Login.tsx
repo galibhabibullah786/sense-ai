@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Shield, Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
@@ -9,10 +9,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useAuth } from "@/contexts/AuthContext";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 const loginSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
+  username: z.string().min(3, "Username must be at least 3 characters"),
   password: z.string().min(6, "Password must be at least 6 characters"),
   remember: z.boolean().optional(),
 });
@@ -23,27 +23,25 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
-  const { toast } = useToast();
 
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
+    defaultValues: { remember: false },
   });
 
   const onSubmit = async (data: LoginFormData) => {
-    const result = await login(data.email, data.password);
+    const result = await login(data.username, data.password, data.remember);
     if (result.error) {
-      toast({
-        variant: "destructive",
-        title: "Login failed",
+      toast.error("Login failed", {
         description: result.error,
       });
     } else {
-      toast({
-        title: "Welcome back!",
+      toast.success("Welcome back!", {
         description: "You have successfully logged in.",
       });
       navigate("/dashboard");
@@ -69,7 +67,7 @@ const Login = () => {
           <h1 className="text-4xl font-bold text-white mb-4">
             Welcome back
           </h1>
-          <p className="text-lg text-gray-300">
+          <p className="text-lg text-white/70">
             Sign in to access your dashboard and continue monitoring your web security.
           </p>
         </motion.div>
@@ -96,23 +94,23 @@ const Login = () => {
 
             <h2 className="text-2xl font-bold mb-2">Sign in</h2>
             <p className="text-muted-foreground mb-8">
-              Enter your credentials to access your account
+              Enter your username and password to sign in
             </p>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <div>
-                <label className="block text-sm font-medium mb-2">Email</label>
+                <label className="block text-sm font-medium mb-2">Username</label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                   <Input
-                    {...register("email")}
-                    type="email"
-                    placeholder="you@example.com"
+                    {...register("username")}
+                    type="text"
+                    placeholder="your_username"
                     className="pl-10 h-12"
                   />
                 </div>
-                {errors.email && (
-                  <p className="text-sm text-destructive mt-1">{errors.email.message}</p>
+                {errors.username && (
+                  <p className="text-sm text-destructive mt-1">{errors.username.message}</p>
                 )}
               </div>
 
@@ -141,14 +139,21 @@ const Login = () => {
 
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Checkbox id="remember" {...register("remember")} />
+                  <Controller
+                    name="remember"
+                    control={control}
+                    render={({ field }) => (
+                      <Checkbox
+                        id="remember"
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    )}
+                  />
                   <label htmlFor="remember" className="text-sm cursor-pointer">
                     Remember me
                   </label>
                 </div>
-                <Link to="#" className="text-sm text-primary hover:underline">
-                  Forgot password?
-                </Link>
               </div>
 
               <Button type="submit" className="w-full h-12" disabled={isSubmitting}>

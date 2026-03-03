@@ -1,32 +1,45 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Mail, Send, MapPin, Phone, CheckCircle } from "lucide-react";
+import { Mail, Send, MapPin, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 export const ContactSection = () => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const { toast } = useToast();
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const WHATSAPP_PHONE = "1234567890"; // International format without +
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsSubmitting(true);
+    if (!firstName.trim() || !lastName.trim() || !email.trim() || !message.trim()) return;
 
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    // Build WhatsApp message from form data
+    const text = [
+      `Hello, my name is ${firstName.trim()} ${lastName.trim()}.`,
+      ``,
+      `Email: ${email.trim()}`,
+      ``,
+      `Message:`,
+      message.trim(),
+    ].join("\n");
 
-    setIsSubmitting(false);
-    setIsSubmitted(true);
-    toast({
-      title: "Message sent!",
-      description: "We'll get back to you as soon as possible.",
+    const whatsappUrl = `https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(text)}`;
+    window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+
+    toast.success("Redirecting to WhatsApp!", {
+      description: "Complete the conversation in WhatsApp.",
     });
 
-    // Reset form after delay
-    setTimeout(() => setIsSubmitted(false), 3000);
+    // Reset form
+    setFirstName("");
+    setLastName("");
+    setEmail("");
+    setMessage("");
   };
 
   return (
@@ -131,8 +144,9 @@ export const ContactSection = () => {
                     </label>
                     <Input
                       placeholder="John"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
                       required
-                      disabled={isSubmitting || isSubmitted}
                     />
                   </div>
                   <div>
@@ -141,8 +155,9 @@ export const ContactSection = () => {
                     </label>
                     <Input
                       placeholder="Doe"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
                       required
-                      disabled={isSubmitting || isSubmitted}
                     />
                   </div>
                 </div>
@@ -154,8 +169,9 @@ export const ContactSection = () => {
                   <Input
                     type="email"
                     placeholder="john@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     required
-                    disabled={isSubmitting || isSubmitted}
                   />
                 </div>
 
@@ -166,32 +182,20 @@ export const ContactSection = () => {
                   <Textarea
                     placeholder="How can we help you?"
                     rows={5}
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
                     required
-                    disabled={isSubmitting || isSubmitted}
                   />
                 </div>
 
                 <Button
                   type="submit"
                   className="w-full h-12"
-                  disabled={isSubmitting || isSubmitted}
                 >
-                  {isSubmitting ? (
-                    <span className="flex items-center gap-2">
-                      <span className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      Sending...
-                    </span>
-                  ) : isSubmitted ? (
-                    <span className="flex items-center gap-2">
-                      <CheckCircle className="h-5 w-5" />
-                      Message Sent!
-                    </span>
-                  ) : (
-                    <span className="flex items-center gap-2">
-                      <Send className="h-5 w-5" />
-                      Send Message
-                    </span>
-                  )}
+                  <span className="flex items-center gap-2">
+                    <Send className="h-5 w-5" />
+                    Send via WhatsApp
+                  </span>
                 </Button>
               </div>
             </form>

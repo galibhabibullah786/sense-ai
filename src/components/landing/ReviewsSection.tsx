@@ -1,9 +1,56 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Star, ChevronLeft, ChevronRight, Quote } from "lucide-react";
-import { reviews } from "@/data/mockData";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+
+const reviews = [
+  {
+    id: 1,
+    name: "Sarah Chen",
+    role: "Security Analyst",
+    company: "TechCorp",
+    avatar: "SC",
+    rating: 5,
+    text: "SenseAI has become an essential part of my daily workflow. It catches suspicious sites that I might have missed, and the detailed explanations help me understand exactly what's happening.",
+  },
+  {
+    id: 2,
+    name: "Marcus Johnson",
+    role: "Privacy Advocate",
+    company: "Digital Rights Foundation",
+    avatar: "MJ",
+    rating: 5,
+    text: "Finally, a tool that makes web privacy accessible to everyone. The trust scores are intuitive, and I love how it breaks down tracking behavior in plain English.",
+  },
+  {
+    id: 3,
+    name: "Elena Rodriguez",
+    role: "IT Manager",
+    company: "GlobalRetail Inc",
+    avatar: "ER",
+    rating: 5,
+    text: "We deployed SenseAI across our organization and saw phishing incidents drop by 60%. The real-time analysis gives our team confidence when browsing vendor sites.",
+  },
+  {
+    id: 4,
+    name: "David Park",
+    role: "Software Engineer",
+    company: "StartupXYZ",
+    avatar: "DP",
+    rating: 4,
+    text: "Great tool for developers who want to ensure they're not inadvertently visiting compromised sites. The API integration possibilities are exciting.",
+  },
+  {
+    id: 5,
+    name: "Amanda Foster",
+    role: "Cybersecurity Consultant",
+    company: "SecureNet Solutions",
+    avatar: "AF",
+    rating: 5,
+    text: "I recommend SenseAI to all my clients. It's like having a security expert reviewing every website you visit in real-time.",
+  },
+];
 
 export const ReviewsSection = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
